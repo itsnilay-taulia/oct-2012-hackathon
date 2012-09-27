@@ -1,5 +1,6 @@
 package com.taulia.hackathon.rest;
 
+import android.util.Log;
 import java.io.*;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
@@ -20,8 +21,9 @@ import org.w3c.dom.Document;
  * @author Matt Zeilenga
  */
 public class NetworkUtilities {
+  private static final String LOG_TAG = "NetworkUtilities";
 
-  public static final String PROJECT_URI = "";
+  public static final String PROJECT_URI = "http://72.167.4.179/taulia_android_app/index.php";
 
   /** Timeout (in ms) we specify for each http request */
   public static final int HTTP_REQUEST_TIMEOUT_MS = 30 * 1000;
@@ -46,7 +48,6 @@ public class NetworkUtilities {
     try {
       entity = new UrlEncodedFormEntity(params);
     } catch (final UnsupportedEncodingException e) {
-      // this should never happen.
       throw new IllegalStateException(e);
     }
     final HttpPost post = new HttpPost(PROJECT_URI);
@@ -57,7 +58,7 @@ public class NetworkUtilities {
   }
 
 
-  public static Document getResponseContent(ArrayList<NameValuePair> params) {
+  public static Document doHttpPost(ArrayList<NameValuePair> params) {
     HttpResponse resp;
 
     try {
@@ -72,6 +73,7 @@ public class NetworkUtilities {
       return doc;
     }
     catch (Exception ex) {
+      Log.e(LOG_TAG, "Exception occured when getting content from POST", ex);
       return null;
     }
   }
