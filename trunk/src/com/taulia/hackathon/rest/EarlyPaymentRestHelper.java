@@ -100,7 +100,7 @@ public class EarlyPaymentRestHelper {
 
   private static ArrayList<NameValuePair> createHttpPostParams(String method) {
     ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-    params.add(new BasicNameValuePair(REST_METHOD_ID, REST_METHOD_EP_COUNT));
+    params.add(new BasicNameValuePair(REST_METHOD_ID, method));
     return params;
   }
 
