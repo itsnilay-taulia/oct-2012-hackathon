@@ -10,13 +10,13 @@ import org.w3c.dom.Node;
  */
 public class Invoice {
 
-  final BigDecimal amount;
-  final BigDecimal apr;
+  final String amount;
+  final String apr;
   final String buyerName;
   final String currency;
-  final Date dueDate;
+  final String dueDate;
   final String id;
-  final Date invoiceDate;
+  final String invoiceDate;
   final String number;
 
   public Invoice(Node node) {
@@ -24,22 +24,27 @@ public class Invoice {
   }
 
   public Invoice(XmlStructureMapper mapper) {
-    this.amount = mapper.getFieldValueAsBigDecimal("amount");
-    this.apr = mapper.getFieldValueAsBigDecimal("apr");
-    this.buyerName = mapper.getFieldValueAsString("buyer");
-    this.currency = mapper.getFieldValueAsString("currency");
-    this.dueDate = mapper.getFieldValueAsDate("duedate");
-    this.id = mapper.getFieldValueAsString("invoice_id");
-    this.invoiceDate = mapper.getFieldValueAsDate("invoicedate");
-    this.number = mapper.getFieldValueAsString("invoice_num");
+    this.amount = mapper.getFieldValue("amount");
+    this.apr = mapper.getFieldValue("apr");
+    this.buyerName = mapper.getFieldValue("buyer");
+    this.currency = mapper.getFieldValue("currency");
+    this.dueDate = mapper.getFieldValue("duedate");
+    this.id = mapper.getFieldValue("invoice_id");
+    this.invoiceDate = mapper.getFieldValue("invoicedate");
+    this.number = mapper.getFieldValue("invoice_num");
   }
 
-  public BigDecimal getAmount() { return this.amount; }
-  public BigDecimal getAPR() { return this.apr; }
+  public String getAmount() { return this.amount; }
+  public String getAPR() { return this.apr; }
   public String getBuyerName() { return this.buyerName; }
   public String getCurrency() { return this.currency; }
-  public Date getDueDate() { return this.dueDate; }
+  public String getDueDate() { return this.dueDate; }
   public String getId() { return this.id; }
-  public Date getInvoiceDate() { return this.invoiceDate; }
+  public String getInvoiceDate() { return this.invoiceDate; }
   public String getNumber() { return this.number; }
+
+  @Override
+  public String toString() {
+    return this.number.concat(" - $").concat(this.amount);
+  }
 }
