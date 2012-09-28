@@ -14,6 +14,7 @@
         <activity android:name="MyActivity" android:label="My Activity"/>
         <activity android:name="DetailEPAvailItemActivity" android:label="Early Payment Offer Details"/>
         <activity android:name="ConfirmActivity" android:label="Confirmation"/>
+        <activity android:name="NotificationActivity" android:label="Notification"/>
 
     </application>
      <uses-permission android:name="android.permission.INTERNET" />

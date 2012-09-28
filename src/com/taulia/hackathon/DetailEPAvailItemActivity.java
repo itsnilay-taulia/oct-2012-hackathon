@@ -11,8 +11,14 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.taulia.hackathon.bo.Invoice;
+import com.taulia.hackathon.rest.EarlyPaymentRestHelper;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Random;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,6 +33,7 @@ public class DetailEPAvailItemActivity extends Activity {
 	private TextView tvDisplayDate;
 	private DatePicker dpResult;
 	private Button btnChangeDate;
+    private Bundle epInvBundle;
 
 	private int year;
 	private int month;
@@ -38,7 +45,7 @@ public class DetailEPAvailItemActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.desc);
-        Bundle epInvBundle = getIntent().getExtras();
+        epInvBundle = getIntent().getExtras();
         String invNo = "Invoice:" + epInvBundle.getString("invNo");
         String amnt = "Amount:" + epInvBundle.getString("amnt");
         String dueDate = "Due Date:" + epInvBundle.getString("dueDate");
@@ -64,9 +71,53 @@ public class DetailEPAvailItemActivity extends Activity {
 
          setCurrentDateOnView();
 		addListenerOnButton();
+
 	}
 
+    private void calculateDiscount() {
+        DateFormat formatter ;
+         Date dueDate_date = new Date();
+        Date epDate_date = new Date();
+        btnChangeDate = (Button) findViewById(R.id.btnChangeDate);
+        String epDate = btnChangeDate.getText().toString();
+        String amnt = epInvBundle.getString("amnt").toString();
+        Double amount = Double.parseDouble(amnt);
+        String dueDate = epInvBundle.getString("dueDate").toString();
+        try{
+
+          formatter = new SimpleDateFormat("mm-dd-yy");
+          dueDate_date = (Date)formatter.parse(dueDate);
+          epDate_date = (Date)formatter.parse(epDate);
+//         System.out.println("Today is " +date );
+          } catch (ParseException e)
+          {System.out.println("Exception :"+e);
+          }
+
+        int diff_date =
+                (int) ((dueDate_date.getTime() - epDate_date.getTime())
+                                 / (1000 * 60 * 60 * 24));
+
+         java.util.Random generator = new java.util.Random();
+         int MIN = 100;
+         int MAX = 200;
+        int randomNumber = generator.nextInt(MAX - MIN) + MIN;
+
+        String dscAmnt = "Discount Amount:  $"+ randomNumber;
+        String dscPerc = "Discount Percentage: "+(randomNumber/5);
+        TextView tv4 = (TextView) findViewById(R.id.dscAmtTextView);
+        tv4.setText(dscAmnt);
+         TextView tv5 = (TextView) findViewById(R.id.dscPerTextView);
+        tv5.setText(dscPerc);
+
+
+    }
+
+
     public void submitIt(View view){
+        String invNo =  epInvBundle.getString("invNo");
+        btnChangeDate = (Button) findViewById(R.id.btnChangeDate);
+        String epDate = btnChangeDate.getText().toString();
+        EarlyPaymentRestHelper.submitEarlyPaymentRequest(invNo,epDate);
 		Intent intent = new Intent(this, ConfirmActivity.class);
 //		intent.putExtra("from", "mapitbutton");
 //		intent.putExtra("index", index);
@@ -99,6 +150,7 @@ public void setCurrentDateOnView() {
 
     // set current date into datepicker
     dpResult.init(year, month, day, null);
+
 
 }
 
@@ -143,11 +195,12 @@ private DatePickerDialog.OnDateSetListener datePickerListener
         .append("Payment Date: "));
         // set selected date into textview
         btnChangeDate.setText(new StringBuilder().append(month + 1)
-           .append("-").append(day).append("-").append(year)
-           .append(" "));
+                .append("-").append(day).append("-").append(year)
+                .append(" "));
 
         // set selected date into datepicker also
         dpResult.init(year, month, day, null);
+        calculateDiscount();
 
     }
 };

@@ -29,7 +29,11 @@ public final class R {
         public static final int goBack=0x7f050001;
         public static final int invNoTextView=0x7f050002;
         public static final int msgTextView=0x7f050000;
+        public static final int show1=0x7f05000e;
+        public static final int show2=0x7f05000f;
+        public static final int show3=0x7f050010;
         public static final int submitButton=0x7f05000b;
+        public static final int textView1=0x7f05000d;
         public static final int tvDate=0x7f050007;
     }
     public static final class layout {
@@ -37,6 +41,7 @@ public final class R {
         public static final int desc=0x7f030001;
         public static final int ep_inv=0x7f030002;
         public static final int main=0x7f030003;
+        public static final int noti=0x7f030004;
     }
     public static final class string {
         public static final int app_name=0x7f040000;
