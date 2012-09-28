@@ -43,6 +43,8 @@ public class DetailEPAvailItemActivity extends Activity {
         String amnt = "Amount:" + epInvBundle.getString("amnt");
         String dueDate = "Due Date:" + epInvBundle.getString("dueDate");
         String buyer = "Buyer:" + epInvBundle.getString("buyer");
+        String dscAmnt = "Discount Amount:";
+        String dscPerc = "Discount Percentage:";
 //        geolat = cafeBundle.getString("geolat");
 //        geolong = cafeBundle.getString("geolong");
 //        index = cafeBundle.getString("index");
@@ -55,13 +57,17 @@ public class DetailEPAvailItemActivity extends Activity {
         tv2.setText(dueDate);
          TextView tv3 = (TextView) findViewById(R.id.buyerTextView);
         tv3.setText(buyer);
+         TextView tv4 = (TextView) findViewById(R.id.dscAmtTextView);
+        tv4.setText(dscAmnt);
+         TextView tv5 = (TextView) findViewById(R.id.dscPerTextView);
+        tv5.setText(dscPerc);
 
          setCurrentDateOnView();
 		addListenerOnButton();
 	}
 
-    public void mapIt(View view){
-		Intent intent = new Intent(this, MyActivity.class);
+    public void submitIt(View view){
+		Intent intent = new Intent(this, ConfirmActivity.class);
 //		intent.putExtra("from", "mapitbutton");
 //		intent.putExtra("index", index);
 //        intent.putExtra("type", type);
@@ -76,6 +82,7 @@ public void setCurrentDateOnView() {
 
     tvDisplayDate = (TextView) findViewById(R.id.tvDate);
     dpResult = (DatePicker) findViewById(R.id.dscDateDP);
+    btnChangeDate = (Button) findViewById(R.id.btnChangeDate);
 
     final Calendar c = Calendar.getInstance();
     year = c.get(Calendar.YEAR);
@@ -84,9 +91,11 @@ public void setCurrentDateOnView() {
 
     // set current date into textview
     tvDisplayDate.setText(new StringBuilder()
+        .append("Payment Date: "));
+    btnChangeDate.setText(new StringBuilder().append("Select Date..."));
         // Month is 0 based, just add 1
-        .append(month + 1).append("-").append(day).append("-")
-        .append(year).append(" "));
+//        .append(month + 1).append("-").append(day).append("-")
+//        .append(year).append(" "));
 
     // set current date into datepicker
     dpResult.init(year, month, day, null);
@@ -130,8 +139,10 @@ private DatePickerDialog.OnDateSetListener datePickerListener
         month = selectedMonth;
         day = selectedDay;
 
+        tvDisplayDate.setText(new StringBuilder()
+        .append("Payment Date: "));
         // set selected date into textview
-        tvDisplayDate.setText(new StringBuilder().append(month + 1)
+        btnChangeDate.setText(new StringBuilder().append(month + 1)
            .append("-").append(day).append("-").append(year)
            .append(" "));
 
