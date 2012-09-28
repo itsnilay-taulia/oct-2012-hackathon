@@ -14,13 +14,11 @@ import org.w3c.dom.NodeList;
 public class EarlyPaymentRestHelper {
 //  private static final String LOG_TAG = "EarlyPaymentRestHelper";
 
-
-  public static String REST_METHOD_ID = "qry";
-
-  public static String REST_METHOD_EP_COUNT = "ep_count";
-  public static String REST_METHOD_EP_GET = "ep_get";
-  public static String REST_METHOD_EP_LIST = "ep_list";
-  public static String REST_METHOD_EP_SUBMIT = "ep_submit";
+  public static String REST_METHOD_EP_COUNT     = "ep_count";
+  public static String REST_METHOD_EP_GET       = "ep_get";
+  public static String REST_METHOD_EP_LIST      = "ep_list";
+  public static String REST_METHOD_EP_NEW_COUNT = "ep_new_count";
+  public static String REST_METHOD_EP_SUBMIT    = "ep_submit";
 
 
   public static Integer getEarlyPaymentCount() {
@@ -29,7 +27,23 @@ public class EarlyPaymentRestHelper {
 
     Document doc = NetworkUtilities.doHttpPost(query);
 
-    return Integer.parseInt(getNodeByTagName(doc, "ep_count").getNodeValue());
+    Node node = XmlStructureMapper.getNodeByTagName(doc, "ep_count");
+    String countStr = XmlStructureMapper.getTextOfNode(node);
+
+    return Integer.parseInt(countStr);
+  }
+
+
+  public static Integer getNewEarlyPaymentCount() {
+
+    String query = buildQueryString(REST_METHOD_EP_NEW_COUNT);
+
+    Document doc = NetworkUtilities.doHttpPost(query);
+
+    Node node = XmlStructureMapper.getNodeByTagName(doc, "ep_count");
+    String countStr = XmlStructureMapper.getTextOfNode(node);
+
+    return Integer.parseInt(countStr);
   }
 
 
@@ -41,7 +55,7 @@ public class EarlyPaymentRestHelper {
 
     Document doc = NetworkUtilities.doHttpPost(query);
 
-    Node invoiceNode = getNodeByTagName(doc, "ep");
+    Node invoiceNode = XmlStructureMapper.getNodeByTagName(doc, "ep");
 
     return new Invoice(invoiceNode);
   }
@@ -53,7 +67,7 @@ public class EarlyPaymentRestHelper {
 
     Document doc = NetworkUtilities.doHttpPost(query);
 
-    NodeList elts = getNodeByTagName(doc, "eps_available").getChildNodes();
+    NodeList elts = XmlStructureMapper.getNodeByTagName(doc, "eps_available").getChildNodes();
     int len = elts.getLength();
 
     ArrayList<Invoice> invoices = new ArrayList<Invoice>(len);
@@ -69,6 +83,10 @@ public class EarlyPaymentRestHelper {
 
   public static Boolean submitEarlyPaymentRequest(String invoiceId, Date requestDate) {
     String epDate = new SimpleDateFormat("yyyy-MM-dd").format(requestDate);
+    return submitEarlyPaymentRequest(invoiceId, epDate);
+  }
+
+  public static Boolean submitEarlyPaymentRequest(String invoiceId, String epDate) {
 
     Map<String, String> params = new HashMap<String, String>(2);
     params.put("inv_id", invoiceId);
@@ -78,13 +96,13 @@ public class EarlyPaymentRestHelper {
 
     Document doc = NetworkUtilities.doHttpPost(query);
 
-    NodeList response = getNodeByTagName(doc, "ep_submit").getChildNodes();
+    NodeList response = XmlStructureMapper.getNodeByTagName(doc, "ep_submit").getChildNodes();
 
     Boolean success = false;
     for (int i = 0; i < response.getLength(); i++) {
       Node node = response.item(i);
       String nodeName = node.getNodeName();
-      String nodeVal = node.getNodeValue();
+      String nodeVal = XmlStructureMapper.getTextOfNode(node);
       if (nodeName == "invoice_id" && nodeVal != invoiceId) {
 //        String msg = "Invoice ID [".concat(nodeVal).concat("] in response does not match submitted ID [".concat(invoiceId).concat("]"));
 //        Log.e(LOG_TAG, msg);
@@ -100,16 +118,6 @@ public class EarlyPaymentRestHelper {
     return success;
   }
 
-
-  private static Node getNodeByTagName(Document doc, String tagName) {
-    if (doc != null) {
-      NodeList nodes = doc.getElementsByTagName(tagName);
-      if (nodes.getLength() > 0) {
-        return nodes.item(0);
-      }
-    }
-    throw new IllegalArgumentException("Cannot find node [".concat(tagName).concat("] in null document"));
-  }
 
   private static String buildQueryString(String method) {
     return "?qry=".concat(method);
