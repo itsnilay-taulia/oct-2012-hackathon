@@ -8,44 +8,74 @@
         android:id="@+id/invNoTextView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         />
      <TextView
         android:id="@+id/amtTextView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
          android:layout_below="@id/invNoTextView"
+         android:textAppearance="?android:attr/textAppearanceLarge"
         />
      <TextView
         android:id="@+id/dueDateTextView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
          android:layout_below="@id/amtTextView"
+         android:textAppearance="?android:attr/textAppearanceLarge"
         />
      <TextView
         android:id="@+id/buyerTextView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/dueDateTextView"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         />
+
     <DatePicker
         android:id="@+id/dscDateDP"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/buyerTextView"
-
          />
     <TextView
         android:id="@+id/tvDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_below="@id/buyerTextView"
+        android:layout_alignParentLeft="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
 
     <Button
             android:id="@+id/btnChangeDate"
-            android:layout_width="96dp"
+            android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/dscDateDP"
-        android:layout_alignParentRight="true"
+        android:layout_below="@id/buyerTextView"
+        android:layout_toRightOf="@+id/tvDate"
         android:text="Change Date" />
+
+    <TextView
+        android:id="@+id/dscAmtTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnChangeDate"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
+    <TextView
+        android:id="@+id/dscPerTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dscAmtTextView"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
+    <Button
+            android:id="@+id/submitButton"
+            android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dscPerTextView"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="50dp"
+        android:onClick="submitIt"
+        android:text="Submit" />
 </RelativeLayout>
