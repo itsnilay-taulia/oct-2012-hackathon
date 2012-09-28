@@ -58,7 +58,6 @@ public class NetworkUtilities {
       dbFactory.setIgnoringElementContentWhitespace(true);
       DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
       Document doc = dBuilder.parse(is);
-      System.out.println(doc);
       return doc;
     }
     catch (Exception ex) {
