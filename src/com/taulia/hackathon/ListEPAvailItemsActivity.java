@@ -16,6 +16,8 @@ import com.taulia.hackathon.bo.Invoice;
 import com.taulia.hackathon.data.EPInvItems;
 import com.taulia.hackathon.rest.EarlyPaymentRestHelper;
 
+import java.util.List;
+
 /**
  * Created by IntelliJ IDEA.
  * User: nilaypatel
@@ -28,22 +30,23 @@ public class ListEPAvailItemsActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        EPInvItems epInvItems = new EPInvItems();
-		setListAdapter(new ArrayAdapter(this, R.layout.ep_inv, EPInvItems.getEPInvItems()));
-//		setListAdapter(new ArrayAdapter<Invoice>(this, R.layout.ep_inv, EarlyPaymentRestHelper.getListOfEarlyPayableInvoices()));
+//        EPInvItems epInvItems = new EPInvItems();
+//		setListAdapter(new ArrayAdapter(this, R.layout.ep_inv, EPInvItems.getEPInvItems()));
+      List<Invoice> epInvoices = EarlyPaymentRestHelper.getListOfEarlyPayableInvoices();
+		  setListAdapter(new ArrayAdapter<Invoice>(this, R.layout.ep_inv, epInvoices));
     }
 
    	public void onListItemClick( ListView parent, View v, int position, long id)  {
 	    Intent intent = new Intent(ListEPAvailItemsActivity.this, DetailEPAvailItemActivity.class);
-//	    Invoice epInvItem = (Invoice) this.getListAdapter().getItem(position);
-	    String epInvItem = (String) this.getListAdapter().getItem(position);
+	    Invoice epInvItem = (Invoice) this.getListAdapter().getItem(position);
+//	    String epInvItem = (String) this.getListAdapter().getItem(position);
 //	    intent.putExtra("index", deptItem.getId()+"");
 //        intent.putExtra("type", "dept");
-        intent.putExtra("invNo", epInvItem);
-        intent.putExtra("amnt", epInvItem);
-        intent.putExtra("dueDate", epInvItem);
-        intent.putExtra("buyer", epInvItem);
-//        intent.putExtra("desc", deptItem.getSnippet());
+        intent.putExtra("invNo", epInvItem.getNumber());
+        intent.putExtra("amnt", epInvItem.getAmount());
+        intent.putExtra("dueDate", epInvItem.getDueDate());
+        intent.putExtra("buyer", epInvItem.getBuyerName());
+////        intent.putExtra("desc", deptItem.getSnippet());
 //	    intent.putExtra("geolat", deptItem.getPoint().getLatitudeE6()+"");
 //	    intent.putExtra("geolong", deptItem.getPoint().getLongitudeE6()+"");
 	     startActivity(intent);
