@@ -3,10 +3,7 @@ package com.taulia.hackathon.rest;
 import android.util.Log;
 import com.taulia.hackathon.bo.Invoice;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
+import java.util.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -15,7 +12,7 @@ import org.w3c.dom.NodeList;
  * @author Matt Zeilenga
  */
 public class EarlyPaymentRestHelper {
-  private static final String LOG_TAG = "EarlyPaymentRestHelper";
+//  private static final String LOG_TAG = "EarlyPaymentRestHelper";
 
 
   public static String REST_METHOD_ID = "qry";
@@ -27,19 +24,22 @@ public class EarlyPaymentRestHelper {
 
 
   public static Integer getEarlyPaymentCount() {
-    ArrayList<NameValuePair> params = createHttpPostParams(REST_METHOD_EP_COUNT);
 
-    Document doc = NetworkUtilities.doHttpPost(params);
+    String query = buildQueryString(REST_METHOD_EP_COUNT);
+
+    Document doc = NetworkUtilities.doHttpPost(query);
 
     return Integer.parseInt(getNodeByTagName(doc, "ep_count").getNodeValue());
   }
 
 
   public static Invoice getEarlyPayableInvoice(String invoiceId) {
-    ArrayList<NameValuePair> params = createHttpPostParams(REST_METHOD_EP_GET);
-    params.add(new BasicNameValuePair("inv_id", invoiceId));
+    Map<String, String> params = new HashMap<String, String>(1);
+    params.put("inv_id", invoiceId);
 
-    Document doc = NetworkUtilities.doHttpPost(params);
+    String query = buildQueryString(REST_METHOD_EP_GET, params);
+
+    Document doc = NetworkUtilities.doHttpPost(query);
 
     Node invoiceNode = getNodeByTagName(doc, "ep");
 
@@ -48,11 +48,12 @@ public class EarlyPaymentRestHelper {
 
 
   public static ArrayList<Invoice> getListOfEarlyPayableInvoices() {
-    ArrayList<NameValuePair> params = createHttpPostParams(REST_METHOD_EP_LIST);
 
-    Document doc = NetworkUtilities.doHttpPost(params);
+    String query = buildQueryString(REST_METHOD_EP_LIST);
 
-    NodeList elts = doc.getElementsByTagName("eps_available");
+    Document doc = NetworkUtilities.doHttpPost(query);
+
+    NodeList elts = getNodeByTagName(doc, "eps_available").getChildNodes();
     int len = elts.getLength();
 
     ArrayList<Invoice> invoices = new ArrayList<Invoice>(len);
@@ -69,11 +70,13 @@ public class EarlyPaymentRestHelper {
   public static Boolean submitEarlyPaymentRequest(String invoiceId, Date requestDate) {
     String epDate = new SimpleDateFormat("yyyy-MM-dd").format(requestDate);
 
-    ArrayList<NameValuePair> params = createHttpPostParams(REST_METHOD_EP_SUBMIT);
-    params.add(new BasicNameValuePair("inv_id", invoiceId));
-    params.add(new BasicNameValuePair("ep_date", epDate));
+    Map<String, String> params = new HashMap<String, String>(2);
+    params.put("inv_id", invoiceId);
+    params.put("ep_date", epDate);
 
-    Document doc = NetworkUtilities.doHttpPost(params);
+    String query = buildQueryString(REST_METHOD_EP_SUBMIT);
+
+    Document doc = NetworkUtilities.doHttpPost(query);
 
     NodeList response = getNodeByTagName(doc, "ep_submit").getChildNodes();
 
@@ -83,12 +86,12 @@ public class EarlyPaymentRestHelper {
       String nodeName = node.getNodeName();
       String nodeVal = node.getNodeValue();
       if (nodeName == "invoice_id" && nodeVal != invoiceId) {
-        String msg = "Invoice ID [".concat(nodeVal).concat("] in response does not match submitted ID [".concat(invoiceId).concat("]"));
-        Log.e(LOG_TAG, msg);
+//        String msg = "Invoice ID [".concat(nodeVal).concat("] in response does not match submitted ID [".concat(invoiceId).concat("]"));
+//        Log.e(LOG_TAG, msg);
       }
       else if (nodeName == "payment_date" && nodeVal != epDate) {
-        String msg = "Payment date [".concat(nodeVal).concat("] in response does not match requested date [".concat(epDate).concat("]"));
-        Log.e(LOG_TAG, msg);
+//        String msg = "Payment date [".concat(nodeVal).concat("] in response does not match requested date [".concat(epDate).concat("]"));
+//        Log.e(LOG_TAG, msg);
       }
       else if (nodeName == "success") {
         success = Boolean.parseBoolean(node.getNodeValue());
@@ -97,12 +100,6 @@ public class EarlyPaymentRestHelper {
     return success;
   }
 
-
-  private static ArrayList<NameValuePair> createHttpPostParams(String method) {
-    ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-    params.add(new BasicNameValuePair(REST_METHOD_ID, method));
-    return params;
-  }
 
   private static Node getNodeByTagName(Document doc, String tagName) {
     if (doc != null) {
@@ -114,8 +111,6 @@ public class EarlyPaymentRestHelper {
     throw new IllegalArgumentException("Cannot find node [".concat(tagName).concat("] in null document"));
   }
 
-
-/*
   private static String buildQueryString(String method) {
     return "?qry=".concat(method);
   }
@@ -130,6 +125,4 @@ public class EarlyPaymentRestHelper {
     }
     return qry;
   }
-
- */
 }
