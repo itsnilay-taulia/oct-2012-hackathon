@@ -1,6 +1,8 @@
 package com.taulia.hackathon.rest;
 
 import java.util.HashMap;
+
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -17,12 +19,7 @@ public class XmlStructureMapper {
     NodeList children = xmlContent.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
       Node child = children.item(i);
-      if (child.hasChildNodes()) {
-        Node subchild = child.getFirstChild();
-        if (subchild.getNodeType() == Node.TEXT_NODE) {
-          content.put(child.getNodeName(), subchild.getNodeValue());
-        }
-      }
+      content.put(child.getNodeName(), getTextOfNode(child));
     }
   }
 
@@ -33,5 +30,26 @@ public class XmlStructureMapper {
     else {
       return null;
     }
+  }
+
+  public static String getTextOfNode(Node node) {
+    if (node != null && node.hasChildNodes()) {
+      Node textnode = node.getFirstChild();
+      if (textnode.getNodeType() == Node.TEXT_NODE) {
+        return textnode.getNodeValue();
+      }
+    }
+    return null;
+  }
+
+
+  public static Node getNodeByTagName(Document doc, String tagName) {
+    if (doc != null) {
+      NodeList nodes = doc.getElementsByTagName(tagName);
+      if (nodes.getLength() > 0) {
+        return nodes.item(0);
+      }
+    }
+    throw new IllegalArgumentException("Cannot find node [".concat(tagName).concat("] in null document"));
   }
 }
